@@ -1,23 +1,15 @@
-package game;
-
-
-import javafx.scene.input.KeyCode;
-
 /*
  * To change this license header, choose License Headers in Project Properties.
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
+package game;
 
 /**
  *
  * @author josephiannone
  */
-
-class Player {
-    //private final Key[] keys;
-    
-    public Player() {
-        
-    }
+final class Constants {
+    static final int STAGE_H = 600;
+    static final int STAGE_W = 800;
 }
