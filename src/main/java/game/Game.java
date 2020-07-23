@@ -40,9 +40,8 @@ public class Game {
         
      
         Group root = new Group();
-        Scene scene = new Scene( root );
-        scene.setCursor(Cursor.OPEN_HAND);
-        primaryStage.setScene( scene );
+        Scene scene = new Scene(root, Constants.STAGE_W, Constants.STAGE_H);
+        primaryStage.setScene(scene);
         
          
         Canvas canvas = new Canvas(Constants.STAGE_W, Constants.STAGE_H);
@@ -96,8 +95,7 @@ public class Game {
 
         gameLoop.start();
         
-        primaryStage.setResizable(false);
-        primaryStage.show();
+        
         
     }
     
