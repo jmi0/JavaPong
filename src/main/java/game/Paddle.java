@@ -22,6 +22,9 @@ class Paddle extends Rectangle {
     public boolean isHuman;
     public char side;
     
+    // to store points scored by this paddle
+    public int points;
+    
     
     public Paddle(double x, double y, Color color, boolean isHuman, char side) {
         this.isHuman = isHuman;

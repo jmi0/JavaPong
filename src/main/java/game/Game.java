@@ -10,29 +10,22 @@ package game;
  * @author josephiannone
  */
 
-import javafx.animation.Animation;
 import javafx.animation.AnimationTimer;
-import javafx.animation.KeyFrame;
-import javafx.animation.ParallelTransition;
-import javafx.animation.Timeline;
-import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
-import javafx.scene.Cursor;
 import javafx.scene.Group;
 import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
-import javafx.scene.shape.Rectangle;
 import javafx.stage.Stage;
 
-import javafx.util.Duration;
 
 public class Game {
     
     private Stage primaryStage;
     private AnimationTimer gameLoop;
     private Ball ball;
+    Canvas canvas;
     Paddle p1;
     Paddle p2;
     
@@ -42,34 +35,35 @@ public class Game {
      
         Group root = new Group();
         Scene scene = new Scene(root, Constants.STAGE_W, Constants.STAGE_H);
+        scene.setFill(Color.BLACK);
         primaryStage.setScene(scene);
         
          
-        Canvas canvas = new Canvas(Constants.STAGE_W, Constants.STAGE_H);
+        canvas = new Canvas(Constants.STAGE_W, Constants.STAGE_H);
         root.getChildren().add( canvas );
         
         /**
         * Create Pong Paddles
         */
-        int humanPaddleX = 20;
-        int cpuPaddleX = Constants.STAGE_W - 20;
+        double humanPaddleX = 20;
+        double cpuPaddleX = canvas.getWidth() - 20 - Paddle.PADDLE_W;
         char cpuPaddleSide = 'r';
         if (humanPaddleSide == 'r') {
             cpuPaddleSide = 'l';
-            humanPaddleX = Constants.STAGE_W - 20;
+            humanPaddleX = canvas.getWidth() - 20 - Paddle.PADDLE_W;
             cpuPaddleX = 20;
         }
-        p1 = new Paddle(humanPaddleX, Constants.STAGE_H/2 - Paddle.PADDLE_H/2, Color.BLACK, true, humanPaddleSide);
+        p1 = new Paddle(humanPaddleX, Constants.STAGE_H/2 - Paddle.PADDLE_H/2, Color.WHITE, true, humanPaddleSide);
         root.getChildren().add(p1);
         
-        p2 = new Paddle(cpuPaddleX, Constants.STAGE_H/2 - Paddle.PADDLE_H/2, Color.BLUE, false, cpuPaddleSide);
+        p2 = new Paddle(cpuPaddleX, Constants.STAGE_H/2 - Paddle.PADDLE_H/2, Color.WHITE, false, cpuPaddleSide);
         root.getChildren().add(p2);
         
         /**
          * Create ball
          */
         
-        ball = new Ball(Constants.STAGE_W/2, Constants.STAGE_H/2, Color.BLACK, Constants.BALL_RADIUS);
+        ball = new Ball(Constants.STAGE_W/2, Constants.STAGE_H/2, Color.WHITE, Constants.BALL_RADIUS);
         root.getChildren().add(ball);
         
         this.primaryStage = primaryStage;
@@ -103,7 +97,7 @@ public class Game {
                 }
                 
                 
-                ball.updateXVelocity(2);
+                ball.updateXVelocity(4);
                 ball.updateYVelocity(1);
                 
             }
@@ -137,12 +131,17 @@ public class Game {
      */
     private boolean yCollision() {
         
-        if (ball.getCenterY() + ball.getRadius() >= Constants.STAGE_H) return true;
+        if (ball.getCenterY() + ball.getRadius() >= canvas.getHeight()) return true;
         
         if (ball.getCenterY() - ball.getRadius() <= 0) return true;
       
         return false;
         
+    }
+    
+    private void checkForScore() {
+        
+      
     }
     
 }
