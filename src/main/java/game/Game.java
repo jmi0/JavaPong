@@ -33,8 +33,9 @@ public class Game {
     private Stage primaryStage;
     private AnimationTimer gameLoop;
     private Ball ball;
-
-  
+    Paddle p1;
+    Paddle p2;
+    
     
     public Game(Stage primaryStage, char humanPaddleSide) {
         
@@ -52,15 +53,17 @@ public class Game {
         */
         int humanPaddleX = 20;
         int cpuPaddleX = Constants.STAGE_W - 20;
+        char cpuPaddleSide = 'r';
         if (humanPaddleSide == 'r') {
+            cpuPaddleSide = 'l';
             humanPaddleX = Constants.STAGE_W - 20;
             cpuPaddleX = 20;
         }
-        Paddle humanPaddle = new Paddle(humanPaddleX, Constants.STAGE_H/2 - Paddle.PADDLE_H/2, Color.BLACK, true);
-        root.getChildren().add(humanPaddle);
+        p1 = new Paddle(humanPaddleX, Constants.STAGE_H/2 - Paddle.PADDLE_H/2, Color.BLACK, true, humanPaddleSide);
+        root.getChildren().add(p1);
         
-        Paddle cpuPaddle = new Paddle(cpuPaddleX, Constants.STAGE_H/2 - Paddle.PADDLE_H/2, Color.BLUE, false);
-        root.getChildren().add(cpuPaddle);
+        p2 = new Paddle(cpuPaddleX, Constants.STAGE_H/2 - Paddle.PADDLE_H/2, Color.BLUE, false, cpuPaddleSide);
+        root.getChildren().add(p2);
         
         /**
          * Create ball
@@ -70,33 +73,56 @@ public class Game {
         root.getChildren().add(ball);
         
         this.primaryStage = primaryStage;
-        
-        
-        EventHandler<MouseEvent> mouseHandler = new EventHandler<MouseEvent>() { 
-            @Override 
-            public void handle(MouseEvent e) { 
-                System.out.println("mouse moved");
-                humanPaddle.setY(e.getY() - Paddle.PADDLE_H/2);
-            }
-        };   
-        //Adding event Filter 
-        root.addEventFilter(MouseEvent.MOUSE_MOVED, mouseHandler);
+       
+        if (p1.isHuman) {
+            EventHandler<MouseEvent> mouseHandler = new EventHandler<MouseEvent>() { 
+                @Override 
+                public void handle(MouseEvent e) { 
+                    //System.out.println("mouse moved");
+                    p1.setY(e.getY() - p1.PADDLE_H/2);
+                }
+            };   
+            //Adding event Filter 
+            root.addEventFilter(MouseEvent.MOUSE_MOVED, mouseHandler);
+        }
         
         // start game
         gameLoop = new AnimationTimer() {
             
             @Override
             public void handle(long now) {
-                System.out.println(humanPaddle.getY());
-                ball.changeXVelocity(ball.xVelocity + .1);
-                ball.changeYVelocity(ball.yVelocity + .1);
+                System.out.println(ball.getCenterY());
+                System.out.println(ball.getCenterX());
+                if(collision()) {
+                    System.out.println("collision");
+                    ball.changeXVelocity();
+                }
+                
+                ball.updateXVelocity(2);
+                ball.updateYVelocity(.4);
+                
             }
+
+         
         };
 
         gameLoop.start();
         
+       
         
+    }
+    
+    private boolean collision() {
         
+        if (ball.getBoundsInParent().intersects(p1.getBoundsInParent())) {
+            return true;
+        }
+        
+        if (ball.getBoundsInParent().intersects(p2.getBoundsInParent())) {
+            return true;
+        }
+        
+        return false;
     }
     
 }

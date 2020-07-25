@@ -41,7 +41,7 @@ public class Main extends Application {
     @Override
     public void start(Stage primaryStage) throws IOException {
         
-        primaryStage.setTitle( "JavaFXPong" );
+        primaryStage.setTitle( "JavaPong" );
         
         VBox root = new VBox();
         //Parent root = FXMLLoader.load(getClass().getResource("/fxml/mainmenu.fxml"));

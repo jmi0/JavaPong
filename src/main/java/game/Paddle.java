@@ -19,9 +19,12 @@ class Paddle extends Rectangle {
     
     static final int PADDLE_H = 100;
     static final int PADDLE_W = 8;
+    public boolean isHuman;
+    public char side;
     
     
-    public Paddle(double x, double y, Color color, boolean isHuman) {
+    public Paddle(double x, double y, Color color, boolean isHuman, char side) {
+        this.isHuman = isHuman;
         setFill(color);
         setStroke(color);
         setStrokeWidth(1);
@@ -29,6 +32,34 @@ class Paddle extends Rectangle {
         setWidth(PADDLE_W);
         setX(x);
         setY(y);
+    }
+    
+    /**
+     * Get the x coordinate range of the game facing edge of the paddle
+     * @return 
+     */
+    public double[] getXEdgeRange() {
+
+        double[] coordinateRange = new double[2];
+        if (side == 'l') {
+            coordinateRange[0] = getX() + PADDLE_W;
+            coordinateRange[1] = (getX() - PADDLE_H) + PADDLE_W;
+        } else { 
+            coordinateRange[0] = getX();
+            coordinateRange[1] = getX() - PADDLE_H;
+        }
+        return coordinateRange;
+        
+    }
+    
+    
+    public double getYEdge() {
+        
+        if (side == 'l') 
+            return getY() + PADDLE_W;
+        else 
+            return getY();
+        
     }
     
 }
