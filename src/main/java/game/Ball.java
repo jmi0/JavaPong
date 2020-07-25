@@ -14,14 +14,13 @@ import javafx.scene.shape.Circle;
  */
 public class Ball extends Circle {
     
-    static final int RADIUS = 8;
-    public double acceleration = 0;
+    
     public double xVelocity;
     public double yVelocity;
     public boolean xVelocityIncreasing;
     public boolean yVelocityIncreasing;
 
-    public Ball(double x, double y, Color color) {
+    public Ball(double x, double y, Color color, int radius) {
         
         setCenterX(x);
         setCenterY(y);
@@ -32,7 +31,7 @@ public class Ball extends Circle {
         this.yVelocityIncreasing = true;
         this.xVelocityIncreasing = false;
         
-        setRadius(RADIUS);
+        setRadius(radius);
         setFill(color);
         setStroke(color);
         setStrokeWidth(1);   
@@ -48,14 +47,6 @@ public class Ball extends Circle {
         else this.yVelocityIncreasing = true;
     }
     
-    public void accelerate() {
-        this.acceleration += .1;
-    }
-    
-    public void deccelerate() {
-        this.acceleration -= .1;
-    }
-    
     public void updateXVelocity(double xVelocity) {
         if (this.xVelocityIncreasing) this.xVelocity += xVelocity;
         else this.xVelocity -= xVelocity;
@@ -68,21 +59,4 @@ public class Ball extends Circle {
         setCenterY(this.yVelocity);
     }
     
-    /**
-     * Get the coordinates of each Y edge of the ball
-     * @return 
-     */
-    public double[] getYEdgeCoordinates() {
-        double[] coordinates = { getCenterY() - RADIUS, getCenterY() + RADIUS };
-        return coordinates;
-    }
-    
-    /**
-     * Get the coordinates of each X edge of the ball
-     * @return 
-     */
-    public double[] getXEdgeCoordinates() {
-        double[] coordinates = { getCenterX() - RADIUS, getCenterX() + RADIUS,};
-        return coordinates;
-    }
 }

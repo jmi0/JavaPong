@@ -69,7 +69,7 @@ public class Game {
          * Create ball
          */
         
-        ball = new Ball(Constants.STAGE_W/2, Constants.STAGE_H/2, Color.BLACK);
+        ball = new Ball(Constants.STAGE_W/2, Constants.STAGE_H/2, Color.BLACK, Constants.BALL_RADIUS);
         root.getChildren().add(ball);
         
         this.primaryStage = primaryStage;
@@ -93,13 +93,18 @@ public class Game {
             public void handle(long now) {
                 System.out.println(ball.getCenterY());
                 System.out.println(ball.getCenterX());
-                if(collision()) {
-                    System.out.println("collision");
+                if(xCollision()) {
+                    System.out.println("x collision");
                     ball.changeXVelocity();
                 }
+                if(yCollision()) {
+                    System.out.println("y collision");
+                    ball.changeYVelocity();
+                }
+                
                 
                 ball.updateXVelocity(2);
-                ball.updateYVelocity(.4);
+                ball.updateYVelocity(1);
                 
             }
 
@@ -112,17 +117,32 @@ public class Game {
         
     }
     
-    private boolean collision() {
+    /**
+     * Check for x collision (ball and paddle)
+     * @return 
+     */
+    private boolean xCollision() {
         
-        if (ball.getBoundsInParent().intersects(p1.getBoundsInParent())) {
-            return true;
-        }
+        if (ball.getBoundsInParent().intersects(p1.getBoundsInParent())) return true;
         
-        if (ball.getBoundsInParent().intersects(p2.getBoundsInParent())) {
-            return true;
-        }
+        if (ball.getBoundsInParent().intersects(p2.getBoundsInParent())) return true;
         
         return false;
+    
+    }
+    
+    /**
+     * Check for y collision (ball and wall)
+     * @return 
+     */
+    private boolean yCollision() {
+        
+        if (ball.getCenterY() + ball.getRadius() >= Constants.STAGE_H) return true;
+        
+        if (ball.getCenterY() - ball.getRadius() <= 0) return true;
+      
+        return false;
+        
     }
     
 }
