@@ -31,6 +31,7 @@ public class Game {
     private Paddle p1;
     private Paddle p2;
     private boolean inPlay = false;
+    private int winningScore = 5;
     
     
     public Game(Stage primaryStage, char humanPaddleSide) {
@@ -70,9 +71,7 @@ public class Game {
         p2ScoreText.setFill(Color.GRAY);
         p2ScoreText.setFont(Font.font ("Verdana", Constants.STAGE_H/8));
         
-        System.out.println(p1.xScoreBoundary);
-        System.out.println(p2.xScoreBoundary);
-        
+     
         
         /**
          * Create ball
@@ -103,44 +102,47 @@ public class Game {
                 if(yCollision()) ball.changeYVelocity();
                 
                 
+              
                 /**
-                 * if game is in play
+                 * check for paddle 1 score
                  */
-                if (inPlay) {
-                    /**
-                     * check for paddle 1 score
-                     */
-                    if (checkForScore(p1)) {
-                        //inPlay = false;
-                        p1.points += 1;
-                        p1ScoreText.setText(Integer.toString(p1.points));
-                        root.getChildren().remove(ball);
+                if (checkForScore(p1)) {
+                    //inPlay = false;
+                    p1.points += 1;
+                    p1ScoreText.setText(Integer.toString(p1.points));
+                    root.getChildren().remove(ball);
+                    if (p1.points >= winningScore) {
+                        System.out.println("Player 1 Wins");
+                        this.stop();
+                    } else {
                         ball = new Ball(Constants.STAGE_W/2, (Math.random() * ((Constants.STAGE_H - 0) + 1)) + 0, Color.WHITE, Constants.BALL_RADIUS);
                         root.getChildren().add(ball);
-                       
-                    }
-                    /**
-                     * check for paddle 2 score
-                     */
-                    else if (checkForScore(p2)) {
-                        //inPlay = false;
-                        p2.points += 1;
-                        p2ScoreText.setText(Integer.toString(p2.points));
-                        root.getChildren().remove(ball);
+                    }   
+                }    
+                /**
+                 * check for paddle 2 score
+                 */
+                else if (checkForScore(p2)) {
+                    //inPlay = false;
+                    p2.points += 1;
+                    p2ScoreText.setText(Integer.toString(p2.points));
+                    root.getChildren().remove(ball);
+                    if (p2.points >= winningScore) {
+                        System.out.println("Player 2 Wins");
+                        this.stop();
+                    } else {
                         ball = new Ball(Constants.STAGE_W/2, (Math.random() * ((Constants.STAGE_H - 0) + 1)) + 0, Color.WHITE, Constants.BALL_RADIUS);
                         root.getChildren().add(ball);
-                        
-                    } 
-                    /**
-                     * move ball
-                     */
-                    else {
-                        cpuPaddleControl();
-                        ball.updateXVelocity(6);
-                        ball.updateYVelocity(3);
                     }
+                } 
+                /**
+                 * move ball
+                 */
+                else {
+                    cpuPaddleControl();
+                    ball.updateXVelocity(6);
+                    ball.updateYVelocity(3);
                 }
-                
                 
             }
 
