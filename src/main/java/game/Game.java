@@ -14,7 +14,10 @@ import javafx.animation.AnimationTimer;
 import javafx.event.EventHandler;
 import javafx.scene.Group;
 import javafx.scene.Scene;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Line;
 import javafx.scene.text.Font;
@@ -30,13 +33,19 @@ public class Game {
     private Scene scene;
     private Paddle p1;
     private Paddle p2;
+    private Group root;
     private boolean inPlay = false;
     private int winningScore = 5;
+    Text p1ScoreText;
+    Text p2ScoreText;
+    Text endMatchMessage;
+    Text menuReplayMessage;
+    VBox endMatchDisplay;
     
     
     public Game(Stage primaryStage, char humanPaddleSide) {
         
-        Group root = new Group();
+        root = new Group();
         scene = new Scene(root, Constants.STAGE_W, Constants.STAGE_H);
         scene.setFill(Color.BLACK);
         
@@ -64,8 +73,8 @@ public class Game {
         /**
          * Create text display for score
          */
-        Text p1ScoreText = new Text(Constants.STAGE_W/4, Constants.STAGE_H/6, Integer.toString(p1.points));
-        Text p2ScoreText = new Text((Constants.STAGE_W/4)*3, Constants.STAGE_H/6, Integer.toString(p2.points));
+        p1ScoreText = new Text(Constants.STAGE_W/4, Constants.STAGE_H/6, Integer.toString(p1.points));
+        p2ScoreText = new Text((Constants.STAGE_W/4)*3, Constants.STAGE_H/6, Integer.toString(p2.points));
         p1ScoreText.setFill(Color.GRAY);
         p1ScoreText.setFont(Font.font ("Verdana", Constants.STAGE_H/8));
         p2ScoreText.setFill(Color.GRAY);
@@ -90,69 +99,33 @@ public class Game {
             scene.addEventFilter(MouseEvent.MOUSE_MOVED, mouseHandler);
         }
         
-        // start game
-        gameLoop = new AnimationTimer() {
-            
+        
+        primaryStage.addEventFilter(KeyEvent.KEY_PRESSED, new EventHandler<KeyEvent>() {
             @Override
-            public void handle(long now) {
+            public void handle(KeyEvent event) {
                 /**
-                 * Check for collisions and update velocity
+                 * Replay
                  */
-                if(xCollision()) ball.changeXVelocity();
-                if(yCollision()) ball.changeYVelocity();
-                
-                
-              
-                /**
-                 * check for paddle 1 score
-                 */
-                if (checkForScore(p1)) {
-                    //inPlay = false;
-                    p1.points += 1;
+                if (event.getCode() == KeyCode.R) {
+                    p1.points = 0;
                     p1ScoreText.setText(Integer.toString(p1.points));
-                    root.getChildren().remove(ball);
-                    if (p1.points >= winningScore) {
-                        System.out.println("Player 1 Wins");
-                        this.stop();
-                    } else {
-                        ball = new Ball(Constants.STAGE_W/2, (Math.random() * ((Constants.STAGE_H - 0) + 1)) + 0, Color.WHITE, Constants.BALL_RADIUS);
-                        root.getChildren().add(ball);
-                    }   
-                }    
-                /**
-                 * check for paddle 2 score
-                 */
-                else if (checkForScore(p2)) {
-                    //inPlay = false;
-                    p2.points += 1;
+                    p2.points = 0;
                     p2ScoreText.setText(Integer.toString(p2.points));
-                    root.getChildren().remove(ball);
-                    if (p2.points >= winningScore) {
-                        System.out.println("Player 2 Wins");
-                        this.stop();
-                    } else {
-                        ball = new Ball(Constants.STAGE_W/2, (Math.random() * ((Constants.STAGE_H - 0) + 1)) + 0, Color.WHITE, Constants.BALL_RADIUS);
-                        root.getChildren().add(ball);
-                    }
-                } 
-                /**
-                 * move ball
-                 */
-                else {
-                    cpuPaddleControl();
-                    ball.updateXVelocity(6);
-                    ball.updateYVelocity(3);
+                    root.getChildren().remove(endMatchDisplay);
+                    
+                    ball = new Ball(Constants.STAGE_W/2, (Math.random() * ((Constants.STAGE_H - 0) + 1)) + 0, Color.WHITE, Constants.BALL_RADIUS);
+                    root.getChildren().add(ball);
+                    startMatch();
                 }
-                
             }
-
-         
-        };
+        });
+        
+        
         
         
         root.getChildren().addAll(p1, p2, ball, courtDivider, p1ScoreText, p2ScoreText);
         primaryStage.setScene(scene);
-        gameLoop.start();
+        startMatch();
         inPlay = true;
         
        
@@ -219,6 +192,85 @@ public class Game {
                 p2.setY(p2.getY() - 4);
             }
         }
+    }
+    
+    private void endMatchMessage(String message) {
+        endMatchMessage = new Text(Constants.STAGE_W/2, Constants.STAGE_H/2, message);
+        endMatchMessage.setFill(Color.GRAY);
+        endMatchMessage.setFont(Font.font ("Verdana", Constants.STAGE_H/12));
+        menuReplayMessage = new Text("Press 'q' to return to the main menu or 'r' to replay.");
+        menuReplayMessage.setFill(Color.GRAY);
+        menuReplayMessage.setFont(Font.font ("Verdana", Constants.STAGE_H/24));
+        endMatchDisplay = new VBox(endMatchMessage, menuReplayMessage);
+        System.out.println(endMatchDisplay.getHeight());
+        endMatchDisplay.setLayoutX((Constants.STAGE_W/2) - 300);
+        endMatchDisplay.setLayoutY((Constants.STAGE_H/2) - 100);
+
+        root.getChildren().add(endMatchDisplay);
+
+    }
+    
+    private void startMatch() {
+        // start game
+        gameLoop = new AnimationTimer() {
+            
+            @Override
+            public void handle(long now) {
+                /**
+                 * Check for collisions and update velocity
+                 */
+                if(xCollision()) ball.changeXVelocity();
+                if(yCollision()) ball.changeYVelocity();
+                
+                
+              
+                /**
+                 * check for paddle 1 score
+                 */
+                if (checkForScore(p1)) {
+                    //inPlay = false;
+                    p1.points += 1;
+                    p1ScoreText.setText(Integer.toString(p1.points));
+                    root.getChildren().remove(ball);
+                    if (p1.points >= winningScore) {
+                        endMatchMessage("Player 1 Wins");
+                        this.stop();
+                        
+                    } else {
+                        ball = new Ball(Constants.STAGE_W/2, (Math.random() * ((Constants.STAGE_H - 0) + 1)) + 0, Color.WHITE, Constants.BALL_RADIUS);
+                        root.getChildren().add(ball);
+                    }   
+                }    
+                /**
+                 * check for paddle 2 score
+                 */
+                else if (checkForScore(p2)) {
+                    //inPlay = false;
+                    p2.points += 1;
+                    p2ScoreText.setText(Integer.toString(p2.points));
+                    root.getChildren().remove(ball);
+                    if (p2.points >= winningScore) {
+                        endMatchMessage("Player 2 Wins");
+                        this.stop();
+                    } else {
+                        ball = new Ball(Constants.STAGE_W/2, (Math.random() * ((Constants.STAGE_H - 0) + 1)) + 0, Color.WHITE, Constants.BALL_RADIUS);
+                        root.getChildren().add(ball);
+                    }
+                } 
+                /**
+                 * move ball
+                 */
+                else {
+                    cpuPaddleControl();
+                    ball.updateXVelocity(6);
+                    ball.updateYVelocity(3);
+                }
+                
+            }
+
+         
+        };
+        gameLoop.start();
     }
     
 }

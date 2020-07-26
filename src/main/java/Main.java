@@ -19,6 +19,8 @@ import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.RadioButton;
 import javafx.scene.control.ToggleGroup;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
@@ -59,9 +61,22 @@ public class Main extends Application {
         medium.setToggleGroup(difficultyOptions);
         RadioButton hard = new RadioButton("Hard");
         hard.setToggleGroup(difficultyOptions);
-        
         Button startGameButton = new Button("Start Game");
+        
     
+        primaryStage.addEventFilter(KeyEvent.KEY_PRESSED, new EventHandler<KeyEvent>() {
+            @Override
+            public void handle(KeyEvent event) {
+                /**
+                 * Come back to main menu if Q is pressed.
+                 */
+                if (event.getCode() == KeyCode.Q) {
+                    primaryStage.setScene(scene);
+                    scene.setRoot(root);
+                }
+            }
+        });
+        
         /**
          * Listen for start game button click and start game
          */
@@ -74,22 +89,15 @@ public class Main extends Application {
             }
         });
         
-        root.getChildren().add(leftOptButton);
-        root.getChildren().add(rightOptButton);
-        root.getChildren().add(easy);
-        root.getChildren().add(medium);
-        root.getChildren().add(hard);
-        root.getChildren().add(startGameButton);
         
         
-        
-        
+        root.getChildren().addAll(leftOptButton, rightOptButton, easy, medium, hard, startGameButton);
+
         primaryStage.setResizable(false);
         primaryStage.show();
-        
-        // dev
-        game = new Game(primaryStage, 'l');
+      
     }
+    
     
     
     public static void main(String[] args) {
