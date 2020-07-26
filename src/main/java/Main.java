@@ -93,6 +93,9 @@ public class Main extends Application {
         
         primaryStage.setResizable(false);
         primaryStage.show();
+        
+        // dev
+        game = new Game(primaryStage, 'l');
     }
     
     

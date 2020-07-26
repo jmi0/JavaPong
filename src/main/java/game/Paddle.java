@@ -21,6 +21,7 @@ class Paddle extends Rectangle {
     static final int PADDLE_W = 8;
     public boolean isHuman;
     public char side;
+    public double xScoreBoundary;
     
     // to store points scored by this paddle
     public int points;
@@ -35,6 +36,12 @@ class Paddle extends Rectangle {
         setWidth(PADDLE_W);
         setX(x);
         setY(y);
+        
+        /**
+         * The boundary on the x axis for this paddle to score a point
+         */
+        if (side == 'r') xScoreBoundary = 0;
+        else xScoreBoundary = Constants.STAGE_W;
     }
     
     /**
