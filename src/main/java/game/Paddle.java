@@ -17,7 +17,7 @@ import javafx.scene.shape.Rectangle;
 
 class Paddle extends Rectangle {
     
-    static final int PADDLE_H = 100;
+    static final int PADDLE_H = 60;
     static final int PADDLE_W = 8;
     public boolean isHuman;
     public char side;
@@ -71,5 +71,8 @@ class Paddle extends Rectangle {
             return getY();
         
     }
+    
+    
+    
     
 }

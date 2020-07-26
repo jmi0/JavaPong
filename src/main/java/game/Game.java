@@ -12,10 +12,8 @@ package game;
 
 import javafx.animation.AnimationTimer;
 import javafx.event.EventHandler;
-import javafx.geometry.Pos;
 import javafx.scene.Group;
 import javafx.scene.Scene;
-import javafx.scene.control.Separator;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Line;
@@ -79,8 +77,7 @@ public class Game {
         /**
          * Create ball
          */
-        ball = new Ball(Constants.STAGE_W/2, Constants.STAGE_H/2, Color.WHITE, Constants.BALL_RADIUS);
-        //root.getChildren().add(ball);
+        ball = new Ball(Constants.STAGE_W/2, (Math.random() * ((Constants.STAGE_H - 0) + 1)) + 0, Color.WHITE, Constants.BALL_RADIUS);
         
         
         if (p1.isHuman) {
@@ -114,27 +111,33 @@ public class Game {
                      * check for paddle 1 score
                      */
                     if (checkForScore(p1)) {
-                        inPlay = false;
+                        //inPlay = false;
                         p1.points += 1;
                         p1ScoreText.setText(Integer.toString(p1.points));
                         root.getChildren().remove(ball);
-                     
+                        ball = new Ball(Constants.STAGE_W/2, (Math.random() * ((Constants.STAGE_H - 0) + 1)) + 0, Color.WHITE, Constants.BALL_RADIUS);
+                        root.getChildren().add(ball);
+                       
                     }
                     /**
                      * check for paddle 2 score
                      */
                     else if (checkForScore(p2)) {
-                        inPlay = false;
+                        //inPlay = false;
                         p2.points += 1;
                         p2ScoreText.setText(Integer.toString(p2.points));
                         root.getChildren().remove(ball);
+                        ball = new Ball(Constants.STAGE_W/2, (Math.random() * ((Constants.STAGE_H - 0) + 1)) + 0, Color.WHITE, Constants.BALL_RADIUS);
+                        root.getChildren().add(ball);
+                        
                     } 
                     /**
                      * move ball
                      */
                     else {
-                        ball.updateXVelocity(3);
-                        ball.updateYVelocity(1);
+                        cpuPaddleControl();
+                        ball.updateXVelocity(6);
+                        ball.updateYVelocity(3);
                     }
                 }
                 
@@ -162,7 +165,7 @@ public class Game {
         
         if (ball.getBoundsInParent().intersects(p1.getBoundsInParent())) return true;
         
-        if (ball.getBoundsInParent().intersects(p2.getBoundsInParent())) return true;
+        else if (ball.getBoundsInParent().intersects(p2.getBoundsInParent())) return true;
         
         return false;
     
@@ -176,21 +179,44 @@ public class Game {
         
         if (ball.getCenterY() + ball.getRadius() >= scene.getHeight()) return true;
         
-        if (ball.getCenterY() - ball.getRadius() <= 0) return true;
+        else if (ball.getCenterY() - ball.getRadius() <= 0) return true;
       
         return false;
         
     }
     
     private boolean checkForScore(Paddle paddle) {
-      if (paddle.xScoreBoundary == 0 && ball.getCenterX() <= paddle.xScoreBoundary) {
-          return true;
-      }
-      if (paddle.xScoreBoundary > 0 && ball.getCenterX() >= paddle.xScoreBoundary) {
-          return true;
-      }
+        
+      if (paddle.xScoreBoundary == 0 && ball.getCenterX() <= paddle.xScoreBoundary) return true;
+      
+      else if (paddle.xScoreBoundary > 0 && ball.getCenterX() >= paddle.xScoreBoundary) return true;
+    
       return false;
       
+    }
+    
+    private void cpuPaddleControl() {
+        /**
+         * dev implementation
+         */
+        
+        /**
+         * Only if ball is moving toward paddle 2s side of court
+         */
+        if (ball.xVelocityIncreasing) {
+            /**
+             * move paddle up if ball is moving up and paddle is below ball
+             */
+            if (ball.yVelocityIncreasing && p2.getY() < Constants.STAGE_H && p2.getY() < ball.getCenterY()) {
+                p2.setY(p2.getY() + 4);
+            }
+            /**
+             * move paddle down if ball is moving down and paddle is above ball
+             */
+            else if (p2.getY() > 0 && p2.getY() > ball.getCenterY()) {
+                p2.setY(p2.getY() - 4);
+            }
+        }
     }
     
 }
