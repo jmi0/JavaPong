@@ -98,6 +98,7 @@ public class Main extends Application {
                  */
                 if (event.getCode() == KeyCode.Q) {
                     game = null;
+                    menumusic.stop();
                     menumusic.play();
                     primaryStage.setScene(scene);
                     scene.setRoot(root);
