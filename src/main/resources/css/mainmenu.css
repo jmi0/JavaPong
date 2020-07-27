@@ -8,6 +8,30 @@ and open the template in the editor.
     Author     : josephiannone
 */
 
-* {
-    color: blue;
+VBox {
+     -fx-alignment: center ;
+}
+
+.label {
+    -fx-width: 100%;
+}
+.root{
+    -fx-font: 16px "Courier New";
+    -fx-base: gray;
+    -fx-color: white;
+    -fx-background: black;
+}
+
+RadioButton {
+    -fx-min-width: 500px;
+}
+
+.leftRightOptGroup {
+    -fx-margin: 10;
+}
+
+.button {
+    -fx-margin-top: 20;
+    -fx-font: 24px "Courier New";
+    
 }

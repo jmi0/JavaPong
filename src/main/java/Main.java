@@ -11,6 +11,7 @@
 
 
 import game.Game;
+import java.io.File;
 import java.io.IOException;
 import javafx.application.Application;
 import javafx.event.ActionEvent;
@@ -22,6 +23,7 @@ import javafx.scene.control.ToggleGroup;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.VBox;
+import javafx.scene.media.AudioClip;
 import javafx.stage.Stage;
 
 
@@ -32,7 +34,9 @@ public class Main extends Application {
     private Game game;
     private char paddleSelection;
     private int difficultySelection;
-   
+    
+    AudioClip menumusic = new AudioClip(new File(getClass().getResource("/sounds/menumusic.wav").getPath()).toURI().toString());
+    
    
     @Override
     public void start(Stage primaryStage) throws IOException {
@@ -43,7 +47,7 @@ public class Main extends Application {
         //Parent root = FXMLLoader.load(getClass().getResource("/fxml/mainmenu.fxml"));
    
         Scene scene = new Scene(root, 800, 600);
-        //scene.getStylesheets().add("/css/mainmenu.css");
+        scene.getStylesheets().add("/css/mainmenu.css");
         primaryStage.setScene(scene);
         scene.setRoot(root);
         
@@ -77,6 +81,7 @@ public class Main extends Application {
                  * Come back to main menu if Q is pressed.
                  */
                 if (event.getCode() == KeyCode.Q) {
+                    menumusic.play();
                     primaryStage.setScene(scene);
                     scene.setRoot(root);
                 }
@@ -103,7 +108,7 @@ public class Main extends Application {
                 if (easy.isSelected()) difficultySelection = 1;
                 else if (medium.isSelected()) difficultySelection = 2;
                 else difficultySelection = 3;
-                
+                menumusic.stop();
                 game = new Game(primaryStage, paddleSelection, difficultySelection);
             }
         });
@@ -111,7 +116,8 @@ public class Main extends Application {
         
         
         root.getChildren().addAll(leftOptButton, rightOptButton, neitherOptButton, easy, medium, hard, startGameButton);
-
+        menumusic.setCycleCount(AudioClip.INDEFINITE);
+        menumusic.play();
         primaryStage.setResizable(false);
         primaryStage.show();
       

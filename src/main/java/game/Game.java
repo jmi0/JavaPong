@@ -10,6 +10,8 @@ package game;
  * @author josephiannone
  */
 
+import java.io.File;
+import java.util.Random;
 import javafx.animation.AnimationTimer;
 import javafx.event.EventHandler;
 import javafx.scene.Group;
@@ -18,12 +20,16 @@ import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.VBox;
+import javafx.scene.media.AudioClip;
+import javafx.scene.media.Media;
+import javafx.scene.media.MediaPlayer;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Line;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import javafx.scene.text.TextAlignment;
 import javafx.stage.Stage;
+import javafx.util.Duration;
 
 
 public class Game {
@@ -34,7 +40,6 @@ public class Game {
     private Paddle leftPaddle;
     private Paddle rightPaddle;
     private Group root;
-    private boolean inPlay = false;
     private int winningScore = 5;
     
     Text p1ScoreText;
@@ -43,9 +48,13 @@ public class Game {
     Text menuReplayMessage;
     VBox endMatchDisplay;
     
+    AudioClip blip1 = new AudioClip(new File(getClass().getResource("/sounds/pongblip1.wav").getPath()).toURI().toString());
+    AudioClip blip2 = new AudioClip(new File(getClass().getResource("/sounds/pongblip2.wav").getPath()).toURI().toString());
+    AudioClip blipPoint = new AudioClip(new File(getClass().getResource("/sounds/score.wav").getPath()).toURI().toString());
+    AudioClip blipWin = new AudioClip(new File(getClass().getResource("/sounds/win.wav").getPath()).toURI().toString());
     
-    public Game(Stage primaryStage, char paddleSelection, int difficultySelection) {
-        
+    
+    public Game(Stage primaryStage, char paddleSelection, int difficultySelection) {        
         
         root = new Group();
         scene = new Scene(root, Constants.STAGE_W, Constants.STAGE_H);
@@ -86,7 +95,7 @@ public class Game {
         /**
          * Create ball
          */
-        ball = new Ball(Constants.STAGE_W/2, (Math.random() * ((Constants.STAGE_H - 0) + 1)) + 0, Color.WHITE, Constants.BALL_RADIUS);
+        ball = new Ball(Constants.STAGE_W/2, randomDouble(0, Constants.STAGE_H), 6, randomDouble(3.0, 4.0), Constants.BALL_RADIUS, Color.WHITE);
         
         
         /**
@@ -107,10 +116,27 @@ public class Game {
                     rightPaddle.points = 0;
                     p2ScoreText.setText(Integer.toString(rightPaddle.points));
                     root.getChildren().remove(endMatchDisplay);
-                    
-                    ball = new Ball(Constants.STAGE_W/2, (Math.random() * ((Constants.STAGE_H - 0) + 1)) + 0, Color.WHITE, Constants.BALL_RADIUS);
-                    root.getChildren().add(ball);
+                    gameLoop = null;
+                    resetBall();
                     startMatch();
+                }
+            }
+        });
+        
+        /**
+         * Listen for q key to return to stop match before going to main menu
+         */
+        primaryStage.addEventFilter(KeyEvent.KEY_PRESSED, new EventHandler<KeyEvent>() {
+            @Override
+            public void handle(KeyEvent event) {
+                /**
+                 * Come back to main menu if Q is pressed.
+                 */
+                if (event.getCode() == KeyCode.Q) {
+                    gameLoop.stop();
+                    root.getChildren().remove(ball);
+                    leftPaddle.points = 0;
+                    rightPaddle.points = 0;
                 }
             }
         });
@@ -180,9 +206,9 @@ public class Game {
     private void cpuPaddleControl(Paddle paddle) {
         
         /**
-         * Only if ball is at least 1/4 across the board and moving toward the paddle
+         * Only if the ball is moving toward the paddle
          */
-        if (Math.abs(paddle.getX() - ball.getCenterX()) <= Constants.STAGE_W - (Constants.STAGE_W/4)) {
+        if ((paddle.getX() < scene.getWidth() / 2 && !ball.xVelocityIncreasing) || (paddle.getX() > scene.getWidth() / 2 && ball.xVelocityIncreasing)) {
             /**
              * move paddle up if ball is moving up and paddle is below ball
              */
@@ -232,7 +258,6 @@ public class Game {
         if (leftPaddle.isHuman) scene.addEventFilter(MouseEvent.MOUSE_MOVED, leftPaddle.mouseHandler);
         if (rightPaddle.isHuman) scene.addEventFilter(MouseEvent.MOUSE_MOVED, rightPaddle.mouseHandler);
         
-        
         // start game
         gameLoop = new AnimationTimer() {
             
@@ -242,8 +267,14 @@ public class Game {
                 /**
                  * Check for collisions and update velocity
                  */
-                if(xCollision()) ball.changeXVelocity();
-                if(yCollision()) ball.changeYVelocity();
+                if(xCollision()) {
+                    ball.reverseXVelocity();
+                    blip1.play();     
+                }
+                if(yCollision()) {
+                    ball.reverseYVelocity();
+                    blip2.play();
+                }
                 
                 
                 if (checkForScore(leftPaddle)) {
@@ -251,6 +282,7 @@ public class Game {
                     /**
                      * check for paddle 1 score
                      */
+                    blipPoint.play();
                     leftPaddle.points += 1;
                     p1ScoreText.setText(Integer.toString(leftPaddle.points));
                     root.getChildren().remove(ball);
@@ -258,6 +290,7 @@ public class Game {
                         if (leftPaddle.isHuman) scene.removeEventFilter(MouseEvent.MOUSE_MOVED, leftPaddle.mouseHandler);
                         if (rightPaddle.isHuman) scene.removeEventFilter(MouseEvent.MOUSE_MOVED, rightPaddle.mouseHandler);
                         endMatchMessage("Left Paddle Wins!");
+                        blipWin.play();
                         this.stop();
                         
                     } else {
@@ -271,6 +304,7 @@ public class Game {
                     /**
                      * check for paddle 2 score
                      */
+                    blipPoint.play();
                     rightPaddle.points += 1;
                     p2ScoreText.setText(Integer.toString(rightPaddle.points));
                     root.getChildren().remove(ball);
@@ -278,7 +312,9 @@ public class Game {
                         if (leftPaddle.isHuman) scene.removeEventFilter(MouseEvent.MOUSE_MOVED, leftPaddle.mouseHandler);
                         if (rightPaddle.isHuman) scene.removeEventFilter(MouseEvent.MOUSE_MOVED, rightPaddle.mouseHandler);
                         endMatchMessage("Right Paddle Wins!");
+                        blipWin.play();
                         this.stop();
+                        
                     } else {
                         resetBall();
                     }
@@ -296,8 +332,8 @@ public class Game {
                     /**
                     * move ball
                     */
-                    ball.updateXVelocity(6);
-                    ball.updateYVelocity(3);
+                    ball.incrementXVelocity();
+                    ball.incrementYVelocity();
                 }
                 
             }
@@ -311,8 +347,15 @@ public class Game {
     
     
     private void resetBall() {
-        ball = new Ball(Constants.STAGE_W/2, (Math.random() * ((Constants.STAGE_H - 0) + 1)) + 0, Color.WHITE, Constants.BALL_RADIUS);
+        
+        ball = new Ball(Constants.STAGE_W/2, randomDouble(0, Constants.STAGE_H), 6, randomDouble(3.0, 4.0), Constants.BALL_RADIUS, Color.WHITE);
         root.getChildren().add(ball);
+    }
+    
+    
+    private static double randomDouble(double min, double max) {
+        Random r = new Random();
+        return min + (max - min) * r.nextDouble();
     }
     
 }
