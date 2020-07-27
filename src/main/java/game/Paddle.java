@@ -12,6 +12,8 @@ package game;
  * @author josephiannone
  */
 
+import javafx.event.EventHandler;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 
@@ -19,16 +21,19 @@ class Paddle extends Rectangle {
     
     static final int PADDLE_H = 60;
     static final int PADDLE_W = 8;
-    public boolean isHuman;
-    public char side;
-    public double xScoreBoundary;
     
-    // to store points scored by this paddle
+    public boolean isHuman;
+    public double xScoreBoundary;
+    public EventHandler<MouseEvent> mouseHandler;
+    
+    /**
+     * to store points scored by this paddle
+     */
     public int points;
     
     
-    public Paddle(double x, double y, Color color, boolean isHuman, char side) {
-        this.isHuman = isHuman;
+    public Paddle(double x, double y, Color color, double xScoreBoundary, boolean isHuman) {
+        
         setFill(color);
         setStroke(color);
         setStrokeWidth(1);
@@ -37,40 +42,29 @@ class Paddle extends Rectangle {
         setX(x);
         setY(y);
         
+        this.isHuman = isHuman;
+        
         /**
-         * The boundary on the x axis for this paddle to score a point
+         * the x coordinate the ball needs to pass for this paddle to score
          */
-        if (side == 'r') xScoreBoundary = 0;
-        else xScoreBoundary = Constants.STAGE_W;
-    }
-    
-    /**
-     * Get the x coordinate range of the game facing edge of the paddle
-     * @return 
-     */
-    public double[] getXEdgeRange() {
-
-        double[] coordinateRange = new double[2];
-        if (side == 'l') {
-            coordinateRange[0] = getX() + PADDLE_W;
-            coordinateRange[1] = (getX() - PADDLE_H) + PADDLE_W;
-        } else { 
-            coordinateRange[0] = getX();
-            coordinateRange[1] = getX() - PADDLE_H;
-        }
-        return coordinateRange;
+        this.xScoreBoundary = xScoreBoundary;
+        
+        /**
+         * create mouse handler
+         */
+        this.mouseHandler = new EventHandler<MouseEvent>() { 
+            @Override 
+            public void handle(MouseEvent e) { 
+                setY(e.getY() - PADDLE_H/2);
+            }
+        };   
+            
+        
         
     }
     
     
-    public double getYEdge() {
-        
-        if (side == 'l') 
-            return getY() + PADDLE_W;
-        else 
-            return getY();
-        
-    }
+    
     
     
     

@@ -22,20 +22,21 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.Line;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
+import javafx.scene.text.TextAlignment;
 import javafx.stage.Stage;
 
 
 public class Game {
     
-    private Stage primaryStage;
     private AnimationTimer gameLoop;
     private Ball ball;
     private Scene scene;
-    private Paddle p1;
-    private Paddle p2;
+    private Paddle leftPaddle;
+    private Paddle rightPaddle;
     private Group root;
     private boolean inPlay = false;
     private int winningScore = 5;
+    
     Text p1ScoreText;
     Text p2ScoreText;
     Text endMatchMessage;
@@ -43,7 +44,8 @@ public class Game {
     VBox endMatchDisplay;
     
     
-    public Game(Stage primaryStage, char humanPaddleSide) {
+    public Game(Stage primaryStage, char paddleSelection, int difficultySelection) {
+        
         
         root = new Group();
         scene = new Scene(root, Constants.STAGE_W, Constants.STAGE_H);
@@ -59,26 +61,25 @@ public class Game {
         /**
         * Create Pong Paddles
         */
-        double humanPaddleX = 20;
-        double cpuPaddleX = scene.getWidth() - 20 - Paddle.PADDLE_W;
-        char cpuPaddleSide = 'r';
-        if (humanPaddleSide == 'r') {
-            cpuPaddleSide = 'l';
-            humanPaddleX = scene.getWidth() - 20 - Paddle.PADDLE_W;
-            cpuPaddleX = 20;
-        }
-        p1 = new Paddle(humanPaddleX, Constants.STAGE_H/2 - Paddle.PADDLE_H/2, Color.WHITE, true, humanPaddleSide);
-        p2 = new Paddle(cpuPaddleX, Constants.STAGE_H/2 - Paddle.PADDLE_H/2, Color.WHITE, false, cpuPaddleSide);
+        boolean leftPaddleIsHuman = false;
+        boolean rightPaddleIsHuman = false;
+        if (paddleSelection == 'l') leftPaddleIsHuman = true;
+        if (paddleSelection == 'r') rightPaddleIsHuman = true;
+        
+        leftPaddle = new Paddle(20, Constants.STAGE_H/2 - Paddle.PADDLE_H/2, Color.WHITE, Constants.STAGE_W, leftPaddleIsHuman);
+        rightPaddle = new Paddle((scene.getWidth() - 20 - Paddle.PADDLE_W), Constants.STAGE_H/2 - Paddle.PADDLE_H/2, Color.WHITE, 0, rightPaddleIsHuman);
+        
+        
         
         /**
          * Create text display for score
          */
-        p1ScoreText = new Text(Constants.STAGE_W/4, Constants.STAGE_H/6, Integer.toString(p1.points));
-        p2ScoreText = new Text((Constants.STAGE_W/4)*3, Constants.STAGE_H/6, Integer.toString(p2.points));
+        p1ScoreText = new Text(Constants.STAGE_W/4, Constants.STAGE_H/6, Integer.toString(leftPaddle.points));
+        p2ScoreText = new Text((Constants.STAGE_W/4)*3, Constants.STAGE_H/6, Integer.toString(rightPaddle.points));
         p1ScoreText.setFill(Color.GRAY);
-        p1ScoreText.setFont(Font.font ("Verdana", Constants.STAGE_H/8));
+        p1ScoreText.setFont(Font.font ("Helvetica", Constants.STAGE_H/8));
         p2ScoreText.setFill(Color.GRAY);
-        p2ScoreText.setFont(Font.font ("Verdana", Constants.STAGE_H/8));
+        p2ScoreText.setFont(Font.font ("Helvetica", Constants.STAGE_H/8));
         
      
         
@@ -88,18 +89,9 @@ public class Game {
         ball = new Ball(Constants.STAGE_W/2, (Math.random() * ((Constants.STAGE_H - 0) + 1)) + 0, Color.WHITE, Constants.BALL_RADIUS);
         
         
-        if (p1.isHuman) {
-            EventHandler<MouseEvent> mouseHandler = new EventHandler<MouseEvent>() { 
-                @Override 
-                public void handle(MouseEvent e) { 
-                    p1.setY(e.getY() - p1.PADDLE_H/2);
-                }
-            };   
-            //Adding event Filter 
-            scene.addEventFilter(MouseEvent.MOUSE_MOVED, mouseHandler);
-        }
-        
-        
+        /**
+         * Event handler for match replay
+         */
         primaryStage.addEventFilter(KeyEvent.KEY_PRESSED, new EventHandler<KeyEvent>() {
             @Override
             public void handle(KeyEvent event) {
@@ -107,10 +99,13 @@ public class Game {
                  * Replay
                  */
                 if (event.getCode() == KeyCode.R) {
-                    p1.points = 0;
-                    p1ScoreText.setText(Integer.toString(p1.points));
-                    p2.points = 0;
-                    p2ScoreText.setText(Integer.toString(p2.points));
+                    
+                    gameLoop.stop();
+                    root.getChildren().remove(ball);
+                    leftPaddle.points = 0;
+                    p1ScoreText.setText(Integer.toString(leftPaddle.points));
+                    rightPaddle.points = 0;
+                    p2ScoreText.setText(Integer.toString(rightPaddle.points));
                     root.getChildren().remove(endMatchDisplay);
                     
                     ball = new Ball(Constants.STAGE_W/2, (Math.random() * ((Constants.STAGE_H - 0) + 1)) + 0, Color.WHITE, Constants.BALL_RADIUS);
@@ -122,15 +117,21 @@ public class Game {
         
         
         
-        
-        root.getChildren().addAll(p1, p2, ball, courtDivider, p1ScoreText, p2ScoreText);
+        /**
+         * Add all objects to group/scene
+         */
+        root.getChildren().addAll(leftPaddle, rightPaddle, ball, courtDivider, p1ScoreText, p2ScoreText);
         primaryStage.setScene(scene);
-        startMatch();
-        inPlay = true;
         
-       
+        
+        /**
+         * start game
+         */
+        startMatch();
+        
         
     }
+    
     
     /**
      * Check for x collision (ball and paddle)
@@ -138,13 +139,14 @@ public class Game {
      */
     private boolean xCollision() {
         
-        if (ball.getBoundsInParent().intersects(p1.getBoundsInParent())) return true;
+        if (ball.getBoundsInParent().intersects(leftPaddle.getBoundsInParent())) return true;
         
-        else if (ball.getBoundsInParent().intersects(p2.getBoundsInParent())) return true;
+        else if (ball.getBoundsInParent().intersects(rightPaddle.getBoundsInParent())) return true;
         
         return false;
     
     }
+    
     
     /**
      * Check for y collision (ball and wall)
@@ -160,6 +162,7 @@ public class Game {
         
     }
     
+    
     private boolean checkForScore(Paddle paddle) {
         
       if (paddle.xScoreBoundary == 0 && ball.getCenterX() <= paddle.xScoreBoundary) return true;
@@ -170,52 +173,72 @@ public class Game {
       
     }
     
-    private void cpuPaddleControl() {
-        /**
-         * dev implementation
-         */
+    /**
+     * A method to handle automated paddle control
+     * @param paddle 
+     */
+    private void cpuPaddleControl(Paddle paddle) {
         
         /**
-         * Only if ball is moving toward paddle 2s side of court
+         * Only if ball is at least 1/4 across the board and moving toward the paddle
          */
-        if (ball.xVelocityIncreasing) {
+        if (Math.abs(paddle.getX() - ball.getCenterX()) <= Constants.STAGE_W - (Constants.STAGE_W/4)) {
             /**
              * move paddle up if ball is moving up and paddle is below ball
              */
-            if (ball.yVelocityIncreasing && p2.getY() < Constants.STAGE_H && p2.getY() < ball.getCenterY()) {
-                p2.setY(p2.getY() + 4);
+            if (ball.yVelocityIncreasing && paddle.getY() < Constants.STAGE_H && paddle.getY() < ball.getCenterY()) {
+                paddle.setY(paddle.getY() + 4);
             }
             /**
              * move paddle down if ball is moving down and paddle is above ball
              */
-            else if (p2.getY() > 0 && p2.getY() > ball.getCenterY()) {
-                p2.setY(p2.getY() - 4);
+            else if (paddle.getY() > 0 && paddle.getY() > ball.getCenterY()) {
+                paddle.setY(paddle.getY() - 4);
             }
         }
+        
     }
     
+    
+    /**
+     * A method to display the match results and menu options 
+     * @param message 
+     */
     private void endMatchMessage(String message) {
+        
         endMatchMessage = new Text(Constants.STAGE_W/2, Constants.STAGE_H/2, message);
         endMatchMessage.setFill(Color.GRAY);
         endMatchMessage.setFont(Font.font ("Verdana", Constants.STAGE_H/12));
-        menuReplayMessage = new Text("Press 'q' to return to the main menu or 'r' to replay.");
-        menuReplayMessage.setFill(Color.GRAY);
-        menuReplayMessage.setFont(Font.font ("Verdana", Constants.STAGE_H/24));
+        endMatchMessage.setTextAlignment(TextAlignment.CENTER);
+        menuReplayMessage = new Text("Press \"q\" to return to the main menu or \"r\" to replay.");
+        menuReplayMessage.setFill(Color.WHITE);
+        menuReplayMessage.setFont(Font.font ("Verdana", Constants.STAGE_H/32));
+        menuReplayMessage.setTextAlignment(TextAlignment.CENTER);
         endMatchDisplay = new VBox(endMatchMessage, menuReplayMessage);
         System.out.println(endMatchDisplay.getHeight());
-        endMatchDisplay.setLayoutX((Constants.STAGE_W/2) - 300);
-        endMatchDisplay.setLayoutY((Constants.STAGE_H/2) - 100);
-
+        endMatchDisplay.setLayoutX((Constants.STAGE_W/2) - 240);
+        //endMatchDisplay.setMinWidth(Constants.STAGE_W);
+        endMatchDisplay.setLayoutY((Constants.STAGE_H/2) - 140);
         root.getChildren().add(endMatchDisplay);
 
     }
     
+    
     private void startMatch() {
+        
+        /**
+         * Adding event Filter(s) for mouse control
+         */
+        if (leftPaddle.isHuman) scene.addEventFilter(MouseEvent.MOUSE_MOVED, leftPaddle.mouseHandler);
+        if (rightPaddle.isHuman) scene.addEventFilter(MouseEvent.MOUSE_MOVED, rightPaddle.mouseHandler);
+        
+        
         // start game
         gameLoop = new AnimationTimer() {
             
             @Override
             public void handle(long now) {
+                
                 /**
                  * Check for collisions and update velocity
                  */
@@ -223,45 +246,56 @@ public class Game {
                 if(yCollision()) ball.changeYVelocity();
                 
                 
-              
-                /**
-                 * check for paddle 1 score
-                 */
-                if (checkForScore(p1)) {
-                    //inPlay = false;
-                    p1.points += 1;
-                    p1ScoreText.setText(Integer.toString(p1.points));
+                if (checkForScore(leftPaddle)) {
+                    
+                    /**
+                     * check for paddle 1 score
+                     */
+                    leftPaddle.points += 1;
+                    p1ScoreText.setText(Integer.toString(leftPaddle.points));
                     root.getChildren().remove(ball);
-                    if (p1.points >= winningScore) {
-                        endMatchMessage("Player 1 Wins");
+                    if (leftPaddle.points >= winningScore) {
+                        if (leftPaddle.isHuman) scene.removeEventFilter(MouseEvent.MOUSE_MOVED, leftPaddle.mouseHandler);
+                        if (rightPaddle.isHuman) scene.removeEventFilter(MouseEvent.MOUSE_MOVED, rightPaddle.mouseHandler);
+                        endMatchMessage("Left Paddle Wins!");
                         this.stop();
                         
                     } else {
-                        ball = new Ball(Constants.STAGE_W/2, (Math.random() * ((Constants.STAGE_H - 0) + 1)) + 0, Color.WHITE, Constants.BALL_RADIUS);
-                        root.getChildren().add(ball);
+                        resetBall();
                     }   
-                }    
-                /**
-                 * check for paddle 2 score
-                 */
-                else if (checkForScore(p2)) {
-                    //inPlay = false;
-                    p2.points += 1;
-                    p2ScoreText.setText(Integer.toString(p2.points));
+                }
+                
+                
+                else if (checkForScore(rightPaddle)) {
+                    
+                    /**
+                     * check for paddle 2 score
+                     */
+                    rightPaddle.points += 1;
+                    p2ScoreText.setText(Integer.toString(rightPaddle.points));
                     root.getChildren().remove(ball);
-                    if (p2.points >= winningScore) {
-                        endMatchMessage("Player 2 Wins");
+                    if (rightPaddle.points >= winningScore) {
+                        if (leftPaddle.isHuman) scene.removeEventFilter(MouseEvent.MOUSE_MOVED, leftPaddle.mouseHandler);
+                        if (rightPaddle.isHuman) scene.removeEventFilter(MouseEvent.MOUSE_MOVED, rightPaddle.mouseHandler);
+                        endMatchMessage("Right Paddle Wins!");
                         this.stop();
                     } else {
-                        ball = new Ball(Constants.STAGE_W/2, (Math.random() * ((Constants.STAGE_H - 0) + 1)) + 0, Color.WHITE, Constants.BALL_RADIUS);
-                        root.getChildren().add(ball);
+                        resetBall();
                     }
-                } 
-                /**
-                 * move ball
-                 */
+                }
+                
                 else {
-                    cpuPaddleControl();
+                    
+                    /**
+                    * automate cpu paddle(s)
+                    */
+                    
+                    if (!leftPaddle.isHuman) cpuPaddleControl(leftPaddle);
+                    if (!rightPaddle.isHuman) cpuPaddleControl(rightPaddle);
+                    
+                    /**
+                    * move ball
+                    */
                     ball.updateXVelocity(6);
                     ball.updateYVelocity(3);
                 }
@@ -270,7 +304,15 @@ public class Game {
 
          
         };
+        
         gameLoop.start();
+        
+    }
+    
+    
+    private void resetBall() {
+        ball = new Ball(Constants.STAGE_W/2, (Math.random() * ((Constants.STAGE_H - 0) + 1)) + 0, Color.WHITE, Constants.BALL_RADIUS);
+        root.getChildren().add(ball);
     }
     
 }

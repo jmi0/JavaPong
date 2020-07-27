@@ -28,9 +28,10 @@ import javafx.stage.Stage;
 
 public class Main extends Application {
     
-    Stage primaryStage;
-    Game game;
-    char humanPaddleSide = 'l';
+    private Stage primaryStage;
+    private Game game;
+    private char paddleSelection;
+    private int difficultySelection;
    
    
     @Override
@@ -42,16 +43,19 @@ public class Main extends Application {
         //Parent root = FXMLLoader.load(getClass().getResource("/fxml/mainmenu.fxml"));
    
         Scene scene = new Scene(root, 800, 600);
-        scene.getStylesheets().add("/css/mainmenu.css");
+        //scene.getStylesheets().add("/css/mainmenu.css");
         primaryStage.setScene(scene);
         scene.setRoot(root);
         
         ToggleGroup leftRightOptGroup = new ToggleGroup();
-        RadioButton leftOptButton = new RadioButton("Play left side of table");
+        RadioButton leftOptButton = new RadioButton("Play left side of screen");
         leftOptButton.setToggleGroup(leftRightOptGroup);
         leftOptButton.setSelected(true);
-        RadioButton rightOptButton = new RadioButton("Play right side of table");
+        RadioButton rightOptButton = new RadioButton("Play right side of screen");
         rightOptButton.setToggleGroup(leftRightOptGroup);
+        RadioButton neitherOptButton = new RadioButton("Neither (Watch the computer play itself.)");
+        neitherOptButton.setToggleGroup(leftRightOptGroup);
+        
         
         ToggleGroup difficultyOptions = new ToggleGroup();
         RadioButton easy = new RadioButton("Easy");
@@ -63,7 +67,9 @@ public class Main extends Application {
         hard.setToggleGroup(difficultyOptions);
         Button startGameButton = new Button("Start Game");
         
-    
+        /**
+         * Listen for q key to return to Main Menu
+         */
         primaryStage.addEventFilter(KeyEvent.KEY_PRESSED, new EventHandler<KeyEvent>() {
             @Override
             public void handle(KeyEvent event) {
@@ -84,14 +90,27 @@ public class Main extends Application {
             @Override
             public void handle(ActionEvent e) {
                 
-                if (rightOptButton.isSelected()) humanPaddleSide = 'r';
-                game = new Game(primaryStage, humanPaddleSide);
+                /**
+                 * determine paddle selection
+                 */
+                if (leftOptButton.isSelected()) paddleSelection = 'l';
+                else if (rightOptButton.isSelected()) paddleSelection = 'r';
+                else paddleSelection = 'n';
+                
+                /**
+                 * Determine difficulty selection
+                 */
+                if (easy.isSelected()) difficultySelection = 1;
+                else if (medium.isSelected()) difficultySelection = 2;
+                else difficultySelection = 3;
+                
+                game = new Game(primaryStage, paddleSelection, difficultySelection);
             }
         });
         
         
         
-        root.getChildren().addAll(leftOptButton, rightOptButton, easy, medium, hard, startGameButton);
+        root.getChildren().addAll(leftOptButton, rightOptButton, neitherOptButton, easy, medium, hard, startGameButton);
 
         primaryStage.setResizable(false);
         primaryStage.show();
