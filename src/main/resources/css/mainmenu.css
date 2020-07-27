@@ -15,23 +15,32 @@ VBox {
 .label {
     -fx-width: 100%;
 }
-.root{
-    -fx-font: 16px "Courier New";
-    -fx-base: gray;
-    -fx-color: white;
-    -fx-background: black;
+.root{   
+    -fx-background: rgb(13, 104, 77);
 }
 
 RadioButton {
     -fx-min-width: 500px;
+    -fx-font: 16px "Courier New";
+     -fx-base: gray;
+    -fx-color: white;
 }
 
-.leftRightOptGroup {
-    -fx-margin: 10;
-}
+
 
 .button {
-    -fx-margin-top: 20;
+    -fx-base: gray;
     -fx-font: 24px "Courier New";
-    
 }
+
+.header1 {
+    -fx-font-size: 42px;
+    -fx-text-fill: white;
+}
+
+.header2 {
+    -fx-font-size: 24px;
+    -fx-text-fill: white;
+}
+
+

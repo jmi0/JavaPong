@@ -16,6 +16,7 @@ import java.io.IOException;
 import javafx.application.Application;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
+import javafx.scene.Cursor;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.RadioButton;
@@ -24,6 +25,8 @@ import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.VBox;
 import javafx.scene.media.AudioClip;
+import javafx.scene.paint.Color;
+import javafx.scene.text.Text;
 import javafx.stage.Stage;
 
 
@@ -44,21 +47,29 @@ public class Main extends Application {
         primaryStage.setTitle( "JavaPong" );
         
         VBox root = new VBox();
-        //Parent root = FXMLLoader.load(getClass().getResource("/fxml/mainmenu.fxml"));
    
         Scene scene = new Scene(root, 800, 600);
         scene.getStylesheets().add("/css/mainmenu.css");
         primaryStage.setScene(scene);
         scene.setRoot(root);
         
-        ToggleGroup leftRightOptGroup = new ToggleGroup();
+        Text header1 = new Text("JavaPong");
+        Text header2 = new Text("A pong implementation inspired by the classic Atari arcade game. Built in Java using the JavaFX API.");
+        header1.getStyleClass().add("header1");
+        header2.getStyleClass().add("header2");
+        header1.setFill(Color.ANTIQUEWHITE);
+        header2.setFill(Color.ANTIQUEWHITE);
+        header2.maxWidth(500);
+        header2.setWrappingWidth(500);
+        
+        ToggleGroup paddleOptions = new ToggleGroup();
         RadioButton leftOptButton = new RadioButton("Play left side of screen");
-        leftOptButton.setToggleGroup(leftRightOptGroup);
+        leftOptButton.setToggleGroup(paddleOptions);
         leftOptButton.setSelected(true);
         RadioButton rightOptButton = new RadioButton("Play right side of screen");
-        rightOptButton.setToggleGroup(leftRightOptGroup);
+        rightOptButton.setToggleGroup(paddleOptions);
         RadioButton neitherOptButton = new RadioButton("Neither (Watch the computer play itself.)");
-        neitherOptButton.setToggleGroup(leftRightOptGroup);
+        neitherOptButton.setToggleGroup(paddleOptions);
         
         
         ToggleGroup difficultyOptions = new ToggleGroup();
@@ -71,6 +82,11 @@ public class Main extends Application {
         hard.setToggleGroup(difficultyOptions);
         Button startGameButton = new Button("Start Game");
         
+        startGameButton.setCursor(Cursor.HAND);
+        
+        root.setSpacing(30);
+        
+        
         /**
          * Listen for q key to return to Main Menu
          */
@@ -81,12 +97,16 @@ public class Main extends Application {
                  * Come back to main menu if Q is pressed.
                  */
                 if (event.getCode() == KeyCode.Q) {
+                    game = null;
                     menumusic.play();
                     primaryStage.setScene(scene);
                     scene.setRoot(root);
                 }
+                
             }
         });
+        
+        
         
         /**
          * Listen for start game button click and start game
@@ -94,7 +114,6 @@ public class Main extends Application {
         startGameButton.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent e) {
-                
                 /**
                  * determine paddle selection
                  */
@@ -109,13 +128,23 @@ public class Main extends Application {
                 else if (medium.isSelected()) difficultySelection = 2;
                 else difficultySelection = 3;
                 menumusic.stop();
+                
+                /**
+                 * init game
+                 */
                 game = new Game(primaryStage, paddleSelection, difficultySelection);
+                /**
+                 * start game
+                 */
+                game.startMatch();
             }
         });
         
         
-        
-        root.getChildren().addAll(leftOptButton, rightOptButton, neitherOptButton, easy, medium, hard, startGameButton);
+        /**
+         * Add elements to root (will add difficulty elements when feature is ready)
+         */
+        root.getChildren().addAll(header1, header2, leftOptButton, rightOptButton, neitherOptButton, startGameButton);
         menumusic.setCycleCount(AudioClip.INDEFINITE);
         menumusic.play();
         primaryStage.setResizable(false);
