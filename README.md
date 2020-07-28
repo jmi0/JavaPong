@@ -5,6 +5,11 @@ I decided to do my own implementation of Pong so I could take an opportunity to 
 
 ---
 
+### UI:
+![ui](src/main/resources/img/pong.gif)
+
+---
+
 ### States:
 1. Main Menu
 2. Game play
