@@ -114,7 +114,7 @@ public class Game {
         /**
          * Create ball
          */
-        ball = new Ball(STAGE_W/2, randomDouble(0, STAGE_H), 6, randomDouble(3.0, 4.0), BALL_RADIUS, Color.WHITE);
+        ball = new Ball(STAGE_W/2, randomDouble(0 + Paddle.HEIGHT, STAGE_H - Paddle.HEIGHT), 6, randomDouble(3.0, 3.4), BALL_RADIUS, Color.WHITE);
         
         
         
@@ -230,16 +230,24 @@ public class Game {
          */
         if ((paddle.getX() < scene.getWidth() / 2 && !ball.xVelocityIncreasing) || (paddle.getX() > scene.getWidth() / 2 && ball.xVelocityIncreasing)) {
             /**
-             * move paddle up if ball is moving up and paddle is below ball
-             */
-            if (ball.yVelocityIncreasing && paddle.getY() < STAGE_H && paddle.getY() < ball.getCenterY()) {
-                paddle.setY(paddle.getY() + 4);
-            }
-            /**
              * move paddle down if ball is moving down and paddle is above ball
              */
+            if (ball.yVelocityIncreasing && paddle.getY() < STAGE_H && paddle.getY() < ball.getCenterY()) {
+                /**
+                 * keep paddle in bounds of stage
+                 */
+                if (paddle.getY() <= STAGE_H - Paddle.HEIGHT) 
+                    paddle.setY(paddle.getY() + 4);
+            }
+            /**
+             * move paddle up if ball is moving up and paddle is below ball
+             */
             else if (paddle.getY() > 0 && paddle.getY() > ball.getCenterY()) {
-                paddle.setY(paddle.getY() - 4);
+                /**
+                 * keep paddle in bounds of stage
+                 */
+                if (paddle.getY() >= 0)
+                    paddle.setY(paddle.getY() - 4);
             }
         }
         
@@ -398,7 +406,7 @@ public class Game {
      * Create new ball and add to root
      */
     private void resetBall() {
-        ball = new Ball(STAGE_W/2, randomDouble(0, STAGE_H), 6, randomDouble(3.0, 4.0), BALL_RADIUS, Color.WHITE);
+        ball = new Ball(STAGE_W/2, randomDouble(0 + Paddle.HEIGHT, STAGE_H - Paddle.HEIGHT), 6, randomDouble(3.0, 3.4), BALL_RADIUS, Color.WHITE);
         root.getChildren().add(ball);
     }
     

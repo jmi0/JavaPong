@@ -50,7 +50,13 @@ class Paddle extends Rectangle {
         this.mouseHandler = new EventHandler<MouseEvent>() { 
             @Override 
             public void handle(MouseEvent e) { 
-                setY(e.getY() - HEIGHT/2);
+                
+                /**
+                 * limit paddle from going off screen
+                 */
+                if ((e.getY() <= (Game.STAGE_H - HEIGHT/2)) && (e.getY() >= HEIGHT/2))
+                    setY(e.getY() - HEIGHT/2);
+               
             }
         };   
             
