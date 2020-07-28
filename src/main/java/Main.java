@@ -1,9 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
-
 /**
  *
  * @author josephiannone
@@ -19,8 +13,6 @@ import javafx.event.EventHandler;
 import javafx.scene.Cursor;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
-import javafx.scene.control.Menu;
-import javafx.scene.control.MenuBar;
 import javafx.scene.control.RadioButton;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.input.KeyCode;
@@ -32,7 +24,12 @@ import javafx.scene.text.Text;
 import javafx.stage.Stage;
 
 
-
+/**
+ * Initialize Stage, display menu, initialize game, create event filters and 
+ * button listeners for navigation between game and menu
+ * 
+ * @author josephiannone
+ */
 public class Main extends Application {
     
     private Stage primaryStage;
@@ -40,7 +37,11 @@ public class Main extends Application {
     private char paddleSelection;
     private int difficultySelection;
     
-    AudioClip menumusic = new AudioClip(new File(getClass().getResource("/sounds/menumusic.wav").getPath()).toURI().toString());
+    /**
+     * initialize audio for opening menu
+     */
+    AudioClip menumusic = new AudioClip(
+            new File(getClass().getResource("/sounds/menumusic.wav").getPath()).toURI().toString());
     
    
     @Override
@@ -49,12 +50,18 @@ public class Main extends Application {
         primaryStage.setTitle( "JavaPong" );
         
         VBox root = new VBox();
-   
+        root.setSpacing(30);
+        
         Scene scene = new Scene(root, 800, 600);
         scene.getStylesheets().add("/css/mainmenu.css");
-        primaryStage.setScene(scene);
         scene.setRoot(root);
         
+        primaryStage.setScene(scene);
+        
+        
+        /**
+         * Text Headers for opening screen
+         */
         Text header1 = new Text("JavaPong");
         Text header2 = new Text("A pong implementation inspired by the classic Atari arcade game. Built in Java using the JavaFX API.");
         header1.getStyleClass().add("header1");
@@ -64,6 +71,9 @@ public class Main extends Application {
         header2.maxWidth(500);
         header2.setWrappingWidth(500);
         
+        /**
+         * Paddle option radio buttons
+         */
         ToggleGroup paddleOptions = new ToggleGroup();
         RadioButton leftOptButton = new RadioButton("Play left side of screen");
         leftOptButton.setToggleGroup(paddleOptions);
@@ -73,7 +83,11 @@ public class Main extends Application {
         RadioButton neitherOptButton = new RadioButton("Neither (Watch the computer play itself.)");
         neitherOptButton.setToggleGroup(paddleOptions);
         
-        
+        /**
+         * Difficulty option radio buttons
+         * TODO: still need to implement this feature in game package
+         * so omitting from scene for now
+         */
         ToggleGroup difficultyOptions = new ToggleGroup();
         RadioButton easy = new RadioButton("Easy");
         easy.setToggleGroup(difficultyOptions);
@@ -82,11 +96,22 @@ public class Main extends Application {
         medium.setToggleGroup(difficultyOptions);
         RadioButton hard = new RadioButton("Hard");
         hard.setToggleGroup(difficultyOptions);
-        Button startGameButton = new Button("Start Game");
         
+        /**
+         * Start game button
+         */
+        Button startGameButton = new Button("Start Game");    
         startGameButton.setCursor(Cursor.HAND);
         
-        root.setSpacing(30);
+         
+        /**
+         * Add elements to root (will add difficulty elements when feature is ready)
+         */
+        root.getChildren().addAll(header1, header2, leftOptButton, rightOptButton, neitherOptButton, startGameButton);
+        menumusic.setCycleCount(AudioClip.INDEFINITE);
+        menumusic.play();
+        primaryStage.setResizable(false);
+        primaryStage.show();
         
         
         /**
@@ -96,7 +121,7 @@ public class Main extends Application {
             @Override
             public void handle(KeyEvent event) {
                 /**
-                 * Come back to main menu if Q is pressed.
+                 * Reset scene and game (Come back to main menu if Q is pressed.)
                  */
                 if (event.getCode() == KeyCode.Q) {
                     game = null;
@@ -108,8 +133,6 @@ public class Main extends Application {
                 
             }
         });
-        
-        
         
         /**
          * Listen for start game button click and start game
@@ -144,18 +167,8 @@ public class Main extends Application {
             }
         });
         
-        
-        /**
-         * Add elements to root (will add difficulty elements when feature is ready)
-         */
-        root.getChildren().addAll(header1, header2, leftOptButton, rightOptButton, neitherOptButton, startGameButton);
-        menumusic.setCycleCount(AudioClip.INDEFINITE);
-        menumusic.play();
-        primaryStage.setResizable(false);
-        primaryStage.show();
       
     }
-    
     
     
     public static void main(String[] args) {

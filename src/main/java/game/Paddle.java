@@ -19,8 +19,8 @@ import javafx.scene.shape.Rectangle;
 
 class Paddle extends Rectangle {
     
-    static final int PADDLE_H = 60;
-    static final int PADDLE_W = 8;
+    static final int HEIGHT = 60;
+    static final int WIDTH = 8;
     
     public boolean isHuman;
     public double xScoreBoundary;
@@ -37,8 +37,9 @@ class Paddle extends Rectangle {
         setFill(color);
         setStroke(color);
         setStrokeWidth(1);
-        setHeight(PADDLE_H);
-        setWidth(PADDLE_W);
+        
+        setHeight(HEIGHT);
+        setWidth(WIDTH);
         setX(x);
         setY(y);
         
@@ -50,12 +51,12 @@ class Paddle extends Rectangle {
         this.xScoreBoundary = xScoreBoundary;
         
         /**
-         * create mouse handler
+         * initialize a mouse handler for this paddle
          */
         this.mouseHandler = new EventHandler<MouseEvent>() { 
             @Override 
             public void handle(MouseEvent e) { 
-                setY(e.getY() - PADDLE_H/2);
+                setY(e.getY() - HEIGHT/2);
             }
         };   
             

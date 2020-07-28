@@ -9,8 +9,3 @@ package game;
  *
  * @author josephiannone
  */
-final class Constants {
-    static final int STAGE_H = 600;
-    static final int STAGE_W = 800;
-    static final int BALL_RADIUS = 8;
-}

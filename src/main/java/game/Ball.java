@@ -35,8 +35,10 @@ public class Ball extends Circle {
         this.xAcceleration = xAcceleration;
         this.yAcceleration = yAcceleration;
         
+        /**
+         * initialize velocity directions with random booleans
+         */
         Random random = new Random();
-        
         this.yVelocityIncreasing = random.nextBoolean();
         this.xVelocityIncreasing = random.nextBoolean();
 
@@ -44,33 +46,53 @@ public class Ball extends Circle {
         setRadius(radius);
         setFill(color);
         setStroke(color);
-        setStrokeWidth(1);   
+        setStrokeWidth(1);
     }
     
+    /**
+     * reverse the x velocity direction
+     */
     public void reverseXVelocity() {
+        /**
+         * use this boolean to denote increasing or decreasing
+         */
         if (this.xVelocityIncreasing) this.xVelocityIncreasing = false;
         else this.xVelocityIncreasing = true;
     }
     
+    /**
+     * reverse the y velocity direction
+     */
     public void reverseYVelocity() {
+        /**
+         * use this boolean to denote increasing or decreasing
+         */
         if (this.yVelocityIncreasing) this.yVelocityIncreasing = false;
         else this.yVelocityIncreasing = true;
     }
     
+    /**
+     * increment the x velocity
+     */
     public void incrementXVelocity() {
+        /**
+         * increment or decrement depending on boolean value
+         */
         if (this.xVelocityIncreasing) this.xVelocity += this.xAcceleration;
         else this.xVelocity -= this.xAcceleration;
         setCenterX(this.xVelocity);
     }
     
+    /**
+     * increment the y velocity
+     */
     public void incrementYVelocity() {
+        /**
+         * increment or decrement depending on boolean value
+         */
         if (this.yVelocityIncreasing) this.yVelocity += this.yAcceleration;
         else this.yVelocity -= this.yAcceleration;
         setCenterY(this.yVelocity);
-    }
-    
-    public void moveBall() {
-        
     }
     
 }

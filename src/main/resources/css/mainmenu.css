@@ -9,7 +9,7 @@ and open the template in the editor.
 */
 
 VBox {
-     -fx-alignment: center ;
+    -fx-alignment: center ;
 }
 
 .label {
@@ -22,11 +22,9 @@ VBox {
 RadioButton {
     -fx-min-width: 500px;
     -fx-font: 16px "Courier New";
-     -fx-base: gray;
+    -fx-base: gray;
     -fx-color: white;
 }
-
-
 
 .button {
     -fx-base: gray;
