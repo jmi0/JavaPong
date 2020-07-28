@@ -165,7 +165,7 @@ public class Game {
         /**
          * Add all objects to group/scene
          */
-        this.root.getChildren().addAll(leftPaddle, rightPaddle, ball, courtDivider, p1ScoreText, p2ScoreText, MainMenuMessage);
+        this.root.getChildren().addAll(courtDivider, p1ScoreText, p2ScoreText, MainMenuMessage, leftPaddle, rightPaddle, ball);
         primaryStage.setScene(scene);
                 
         
@@ -276,7 +276,7 @@ public class Game {
         endMatchDisplay = new VBox(endMatchMessage, menuReplayMessage);
         
         // Set positioning of vBox
-        endMatchDisplay.setLayoutX((STAGE_W/2) - 240);
+        endMatchDisplay.setLayoutX((STAGE_W/2) - 200);
         endMatchDisplay.setLayoutY((STAGE_H/2) - 140);
         
         // display
