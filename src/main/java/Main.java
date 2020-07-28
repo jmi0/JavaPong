@@ -19,6 +19,8 @@ import javafx.event.EventHandler;
 import javafx.scene.Cursor;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
+import javafx.scene.control.Menu;
+import javafx.scene.control.MenuBar;
 import javafx.scene.control.RadioButton;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.input.KeyCode;
@@ -128,6 +130,7 @@ public class Main extends Application {
                 if (easy.isSelected()) difficultySelection = 1;
                 else if (medium.isSelected()) difficultySelection = 2;
                 else difficultySelection = 3;
+                
                 menumusic.stop();
                 
                 /**
