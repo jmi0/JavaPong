@@ -19,6 +19,7 @@ import javafx.scene.media.AudioClip;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Line;
 import javafx.scene.text.Font;
+import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
 import javafx.scene.text.TextAlignment;
 import javafx.stage.Stage;
@@ -105,9 +106,9 @@ public class Game {
         p1ScoreText = new Text(STAGE_W/4, STAGE_H/6, Integer.toString(leftPaddle.points));
         p2ScoreText = new Text((STAGE_W/4)*3, STAGE_H/6, Integer.toString(rightPaddle.points));
         p1ScoreText.setFill(Color.ANTIQUEWHITE);
-        p1ScoreText.setFont(Font.font (STAGE_H/8));
+        p1ScoreText.setFont(Font.font("Helvetica", FontWeight.EXTRA_LIGHT, STAGE_H/8));
         p2ScoreText.setFill(Color.ANTIQUEWHITE);
-        p2ScoreText.setFont(Font.font (STAGE_H/8));
+        p2ScoreText.setFont(Font.font("Helvetica", FontWeight.EXTRA_LIGHT, STAGE_H/8));
         
      
         

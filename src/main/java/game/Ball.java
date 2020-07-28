@@ -26,6 +26,10 @@ public class Ball extends Circle {
 
     public Ball(double xPos, double yPos, double xAcceleration, double yAcceleration, int radius, Color color) {
         
+        // need to observe these for testing
+        //System.out.println(yAcceleration);
+        //System.out.println(yPos);
+        
         setCenterX(xPos);
         setCenterY(yPos);
         
