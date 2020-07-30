@@ -1,3 +1,5 @@
+package com.joeiannone.javapongclone;
+
 /**
  *
  * @author josephiannone
