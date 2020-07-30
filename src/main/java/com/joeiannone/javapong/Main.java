@@ -1,4 +1,4 @@
-package com.joeiannone.javapongclone;
+package com.joeiannone.javapong;
 
 /**
  *
