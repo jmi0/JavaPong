@@ -1,4 +1,4 @@
-package game;
+package com.joeiannone.javapong.game;
 
 
 /**
@@ -6,6 +6,7 @@ package game;
  * @author josephiannone
  */
 
+import com.joeiannone.javapong.game.Game;
 import javafx.event.EventHandler;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;

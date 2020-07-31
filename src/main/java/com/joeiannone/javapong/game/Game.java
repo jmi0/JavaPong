@@ -1,4 +1,4 @@
-package game;
+package com.joeiannone.javapong.game;
 
 /**
  *
@@ -221,6 +221,11 @@ public class Game {
     
     /**
      * A method to handle automated paddle control
+     * 
+     * This is a pretty simple and naive algorithm that is good enough 
+     * for development use, but will need to develop something more 
+     * intelligent later
+     * 
      * 
      * @param paddle 
      */

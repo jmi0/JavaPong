@@ -10,4 +10,11 @@
         <maven.compiler.source>1.8</maven.compiler.source>
         <maven.compiler.target>1.8</maven.compiler.target>
     </properties>
+    <developers>
+        <developer>
+            <id>jmi0</id>
+            <name>Joe Iannone</name>
+            <email>joseph.m.iannone@gmail.com</email>
+	</developer>
+    </developers>
 </project>

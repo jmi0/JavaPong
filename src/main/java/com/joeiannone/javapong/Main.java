@@ -6,7 +6,7 @@ package com.joeiannone.javapong;
  */
 
 
-import game.Game;
+import com.joeiannone.javapong.game.Game;
 import java.io.File;
 import java.io.IOException;
 import javafx.application.Application;
@@ -38,7 +38,7 @@ public class Main extends Application {
     private Game game;
     private char paddleSelection;
     private int difficultySelection;
-    
+
     /**
      * initialize audio for opening menu
      */
@@ -48,6 +48,8 @@ public class Main extends Application {
    
     @Override
     public void start(Stage primaryStage) throws IOException {
+        
+        
         
         primaryStage.setTitle( "JavaPong" );
         
